@@ -19,13 +19,10 @@ int main(void)
     printf("f=%c, b=%c\n", str2.front(), str2.back());
     printf("f=%c, b=%c\n", str3.front(), str3.back());
 
-    // NO!
-    //fat_str::fat_str dont_run_this;
-    //printf("f=%c,b=%c\n", dont_run_this.front(), dont_run_this.back());
-
-    fat_str::fat_str empty{""};
-    if (empty.empty()) {
-        printf("f=%c, b=%c\n", empty.front(), empty.back());
+    // test copy ctor from empty str
+    fat_str::fat_str empty, empty2{empty};
+    if (empty.empty() && empty2.empty()) {
+        printf("f=%c, b=%c\n", empty2.front(), empty2.back());
         printf("Empty!\n");
     }
 
@@ -42,6 +39,14 @@ int main(void)
 
     // copy from 'str3' to test copy operator with size less than str3
     cp = str3;
+    if (cp == str3) {
+        printf("OK\n");
+        printf("%s, %zu\n", cp.data(), cp.size());
+        printf("f=%c, b=%c\n", cp.front(), cp.back());
+    }
+
+    // do nothing
+    cp = empty;
     if (cp == str3) {
         printf("OK\n");
         printf("%s, %zu\n", cp.data(), cp.size());

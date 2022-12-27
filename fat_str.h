@@ -27,11 +27,12 @@ public:
     }
 
     fat_str(const fat_str& other) {
-        if (this != &other && other.m_ptr != nullptr) {
+        if (this != &other) {
             size_t other_size = other.size();
             m_ptr = new char[sizeof(uint32_t) + other_size + 1]();
             size_t copy_size = sizeof(uint32_t) + other_size;
-            std::memcpy(static_cast<void*>(m_ptr), static_cast<void*>(other.m_ptr), copy_size);
+            if (other_size > 0)
+                std::memcpy(static_cast<void*>(m_ptr), static_cast<void*>(other.m_ptr), copy_size);
         }
     }
 
