@@ -24,6 +24,8 @@ int main(void)
     //printf("f=%c,b=%c\n", dont_run_this.front(), dont_run_this.back());
 
     fat_str::fat_str empty{""};
-    if (empty.empty())
+    if (empty.empty()) {
+        printf("f=%c, b=%c\n", empty.front(), empty.back());
         printf("Empty!\n");
+    }
 }

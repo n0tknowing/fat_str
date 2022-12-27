@@ -85,7 +85,7 @@ public:
     char& back() {
         // UB if m_ptr is nullptr but it will returns '\0' if empty()
         size_t sz = size();
-        sz = sz > 0 ? sz - 1 : 1;
+        sz = sz > 0 ? sz - 1 : 0;
         return m_ptr[sizeof(uint32_t) + sz];
     }
 
