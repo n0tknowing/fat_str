@@ -18,10 +18,10 @@ public:
         if (size > UINT32_C(536870912)) // 512 MiB
             size = UINT32_C(536870912);
         m_ptr = new char[sizeof(uint32_t) + size + 1]();
-        std::memcpy(static_cast<void*>(m_ptr), static_cast<void*>(&size), sizeof(uint32_t));
+        std::memcpy(m_ptr, &size, sizeof(uint32_t));
         if (str != nullptr) {
             m_ptr += sizeof(uint32_t);
-            std::memcpy(static_cast<void*>(m_ptr), static_cast<const void*>(str), size);
+            std::memcpy(m_ptr, str, size);
             m_ptr -= sizeof(uint32_t);
         }
     }
@@ -32,7 +32,7 @@ public:
             m_ptr = new char[sizeof(uint32_t) + other_size + 1]();
             size_t copy_size = sizeof(uint32_t) + other_size;
             if (other_size > 0)
-                std::memcpy(static_cast<void*>(m_ptr), static_cast<void*>(other.m_ptr), copy_size);
+                std::memcpy(m_ptr, other.m_ptr, copy_size);
         }
     }
 
@@ -41,8 +41,7 @@ public:
             size_t this_size = size();
             size_t other_size = other.size();
             if (this_size < other_size) {
-                if (this_size > 0)
-                    delete[] m_ptr;
+                delete[] m_ptr;
                 m_ptr = new char[sizeof(uint32_t) + other_size + 1]();
             } else {
                 // this_size >= other_size
@@ -54,12 +53,12 @@ public:
                 //   m_ptr       = |abcdef000000|  <-- after
                 //   other.m_ptr = |qwerty0|
                 m_ptr += sizeof(uint32_t);
-                std::memset(static_cast<void*>(m_ptr + other_size), 0, this_size - other_size);
+                std::memset(m_ptr + other_size, 0, this_size - other_size);
                 m_ptr -= sizeof(uint32_t);
             }
             // copy other's size() and data()
             size_t copy_size = sizeof(uint32_t) + other_size;
-            std::memcpy(static_cast<void*>(m_ptr), static_cast<void*>(other.m_ptr), copy_size);
+            std::memcpy(m_ptr, other.m_ptr, copy_size);
 
             // result should be like this if this_size >= other_size:
             //   m_ptr       = |qwerty000000|
@@ -74,8 +73,8 @@ public:
             m_ptr = new char[sizeof(uint32_t) + other_size + 1]();
             size_t copy_size = sizeof(uint32_t) + other_size;
             if (other_size > 0)
-                std::memcpy(static_cast<void*>(m_ptr), static_cast<void*>(other.m_ptr), copy_size);
-            std::memset(static_cast<void*>(other.m_ptr), 0, copy_size);
+                std::memcpy(m_ptr, other.m_ptr, copy_size);
+            std::memset(other.m_ptr, 0, copy_size);
         }
     }
 
@@ -83,13 +82,13 @@ public:
         if (this != &other && other.m_ptr != nullptr) {
             size_t this_size = size();
             size_t other_size = other.size();
-            if (this_size < other_size) {
+            if (this_size != other_size) {
                 delete[] m_ptr;
                 m_ptr = new char[sizeof(uint32_t) + other_size + 1]();
             }
             size_t copy_size = sizeof(uint32_t) + other_size;
-            std::memcpy(static_cast<void*>(m_ptr), static_cast<void*>(other.m_ptr), copy_size);
-            std::memset(static_cast<void*>(other.m_ptr), 0, copy_size);
+            std::memcpy(m_ptr, other.m_ptr, copy_size);
+            std::memset(other.m_ptr, 0, copy_size);
         }
         return *this;
     }
@@ -139,7 +138,7 @@ public:
     size_t size() const {
         size_t size = 0;
         if (m_ptr != nullptr)
-            std::memcpy(static_cast<void*>(&size), static_cast<void*>(m_ptr), sizeof(uint32_t));
+            std::memcpy(&size, m_ptr, sizeof(uint32_t));
         return size;
     }
 
