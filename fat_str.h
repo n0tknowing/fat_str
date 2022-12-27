@@ -28,6 +28,15 @@ public:
 
     fat_str(const fat_str& other) {
         if (this != &other && other.m_ptr != nullptr) {
+            size_t other_size = other.size();
+            m_ptr = new char[sizeof(uint32_t) + other_size + 1]();
+            size_t copy_size = sizeof(uint32_t) + other_size;
+            std::memcpy(static_cast<void*>(m_ptr), static_cast<void*>(other.m_ptr), copy_size);
+        }
+    }
+
+    fat_str& operator=(const fat_str& other) {
+        if (this != &other && other.m_ptr != nullptr) {
             size_t this_size = size();
             size_t other_size = other.size();
             if (this_size < other_size) {
@@ -55,6 +64,7 @@ public:
             //   m_ptr       = |qwerty000000|
             //   other.m_ptr = |qwerty0|
         }
+        return *this;
     }
 
     ~fat_str() {

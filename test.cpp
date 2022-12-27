@@ -28,4 +28,23 @@ int main(void)
         printf("f=%c, b=%c\n", empty.front(), empty.back());
         printf("Empty!\n");
     }
+
+    fat_str::fat_str cp{"12345678910"};
+    printf("%s, %zu\n", cp.data(), cp.size());
+
+    // copy from 'str2' to test copy operator with same size
+    cp = str2;
+    if (cp == str2) {
+        printf("OK\n");
+        printf("%s, %zu\n", cp.data(), cp.size());
+        printf("f=%c, b=%c\n", cp.front(), cp.back());
+    }
+
+    // copy from 'str3' to test copy operator with size less than str3
+    cp = str3;
+    if (cp == str3) {
+        printf("OK\n");
+        printf("%s, %zu\n", cp.data(), cp.size());
+        printf("f=%c, b=%c\n", cp.front(), cp.back());
+    }
 }
