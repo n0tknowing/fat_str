@@ -68,6 +68,32 @@ public:
         return *this;
     }
 
+    fat_str(fat_str&& other) {
+        if (this != &other) {
+            size_t other_size = other.size();
+            m_ptr = new char[sizeof(uint32_t) + other_size + 1]();
+            size_t copy_size = sizeof(uint32_t) + other_size;
+            if (other_size > 0)
+                std::memcpy(static_cast<void*>(m_ptr), static_cast<void*>(other.m_ptr), copy_size);
+            std::memset(static_cast<void*>(other.m_ptr), 0, copy_size);
+        }
+    }
+
+    fat_str& operator=(fat_str&& other) {
+        if (this != &other && other.m_ptr != nullptr) {
+            size_t this_size = size();
+            size_t other_size = other.size();
+            if (this_size < other_size) {
+                delete[] m_ptr;
+                m_ptr = new char[sizeof(uint32_t) + other_size + 1]();
+            }
+            size_t copy_size = sizeof(uint32_t) + other_size;
+            std::memcpy(static_cast<void*>(m_ptr), static_cast<void*>(other.m_ptr), copy_size);
+            std::memset(static_cast<void*>(other.m_ptr), 0, copy_size);
+        }
+        return *this;
+    }
+
     ~fat_str() {
         if (m_ptr != nullptr) {
             delete[] m_ptr;
@@ -101,7 +127,7 @@ public:
     }
 
     const char *data() const {
-        return static_cast<const char*>(m_ptr + sizeof(uint32_t));
+        return m_ptr ? static_cast<const char*>(m_ptr + sizeof(uint32_t)) : "";
     }
 
     // ===== Capacity =====

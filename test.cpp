@@ -1,3 +1,4 @@
+#include <utility>
 #include <cstdio>
 #include "fat_str.h"
 
@@ -29,7 +30,7 @@ int main(void)
     fat_str::fat_str cp{"12345678910"};
     printf("%s, %zu\n", cp.data(), cp.size());
 
-    // copy from 'str2' to test copy operator with same size
+    // copy from 'str2' to test copy assignment with same size
     cp = str2;
     if (cp == str2) {
         printf("OK\n");
@@ -37,7 +38,7 @@ int main(void)
         printf("f=%c, b=%c\n", cp.front(), cp.back());
     }
 
-    // copy from 'str3' to test copy operator with size less than str3
+    // copy from 'str3' to test copy assignment with size less than str3
     cp = str3;
     if (cp == str3) {
         printf("OK\n");
@@ -52,4 +53,16 @@ int main(void)
         printf("%s, %zu\n", cp.data(), cp.size());
         printf("f=%c, b=%c\n", cp.front(), cp.back());
     }
+
+    // test move ctor and assignment
+    fat_str::fat_str mv1{"move pls"}, mv2;
+    printf("Before:\n");
+    printf("  mv1=%s, mv2=%s\n", mv1.data(), mv2.data());
+    mv2 = std::move(mv1);
+    printf("After move ctor:\n");
+    printf("  mv1=%s, mv2=%s\n", mv1.data(), mv2.data());
+
+    fat_str::fat_str mv3{std::move(mv2)};
+    printf("After move assignment:\n");
+    printf("  mv1=%s, mv2=%s, mv3=%s\n", mv1.data(), mv2.data(), mv3.data());
 }
