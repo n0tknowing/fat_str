@@ -181,6 +181,21 @@ public:
         return cap;
     }
 
+    // ===== Operations =====
+
+    void clear() {
+        size_t sz = size();
+        if (sz > 0) { // don't clear capacity
+            size_t clr_size = sizeof(uint32_t) + sz;
+            std::memset(m_ptr + sizeof(uint32_t), 0, clr_size);
+        }
+    }
+
+    void swap(fat_str& other) {
+        if (this != &other)
+            std::swap(m_ptr, other.m_ptr);
+    }
+
     // ===== Other =====
 
     bool operator==(const fat_str& other) const {

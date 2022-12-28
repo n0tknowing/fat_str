@@ -96,22 +96,29 @@ int main(void)
     for (const fat_str::fat_str &str : fv)
         printf("%s\n", str.data());
 
-    {
-        fat_str::fat_str a{"from a"}, b{"from b"};
-        printf("a = %s\n", a.data());
-        printf("b = %s\n", b.data());
-        a = std::move(b);
-        printf("a = %s\n", a.data());
-        printf("b = %s\n", b.data()); // empty() == true
-        fat_str::fat_str c, d{std::move(c)};
-        printf("c = %s\n", c.data()); // empty() == true
-        printf("d = %s\n", d.data()); // empty() == true
-        try {
-            printf("char at 0 in c is %c\n", c.at(0));
-            printf("char at 0 in d is %c\n", d.at(0));
-        } catch (std::exception& e) {
-            printf("fail? %s\n", e.what());
-            return 1;
-        }
+    fat_str::fat_str a{"from a"}, b{"from b"};
+    printf("a = %s\n", a.data());
+    printf("b = %s\n", b.data());
+    a = std::move(b);
+    printf("a = %s\n", a.data());
+    printf("b = %s\n", b.data()); // empty() == true
+    fat_str::fat_str c, d{std::move(c)};
+    printf("c = %s\n", c.data()); // empty() == true
+    printf("d = %s\n", d.data()); // empty() == true
+    try {
+        printf("char at 0 in c is %c\n", c.at(0));
+        printf("char at 0 in d is %c\n", d.at(0));
+    } catch (std::exception& e) {
+        printf("fail? %s\n", e.what());
     }
+    printf("a = size(%zu), cap(%zu)\n", a.size(), a.capacity());
+    a.clear();
+    printf("a = size(%zu), cap(%zu)\n", a.size(), a.capacity());
+    a = "it's a again";
+    b = "from b (new)";
+    printf("a = %s\n", a.data());
+    printf("b = %s\n", b.data());
+    a.swap(b);
+    printf("a = %s\n", a.data());
+    printf("b = %s\n", b.data());
 }
