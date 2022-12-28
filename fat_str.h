@@ -18,7 +18,7 @@ public:
         size_t size = str ? std::strlen(str) : 0;
         size_t cap = size < 32 ? 32 : size;
         if (cap > UINT32_C(536870912)) // 512 MiB
-            throw std::length_error("");
+            throw std::length_error("fat_str::fat_str(const char*): string size reached max size: 536870912 bytes");
         m_ptr = new char[sizeof(uint32_t) * 2 + cap + 1]();
         std::memcpy(m_ptr, &cap, sizeof(uint32_t)); // capacity
         std::memcpy(m_ptr + sizeof(uint32_t), &size, sizeof(uint32_t)); // length
@@ -61,7 +61,7 @@ public:
     fat_str& operator=(const char *str) {
         size_t str_size = str ? std::strlen(str) : 0;
         if (str_size > max_size())
-            throw std::length_error("");
+            throw std::length_error("fat_str::operator=(const char*): string size reached max_size(): 536870912 bytes");
         size_t this_cap = capacity();
         size_t this_size = size();
         size_t data_off = sizeof(uint32_t) * 2;
@@ -80,13 +80,19 @@ public:
     }
 
     fat_str(fat_str&& other) {
-        if (this != &other)
+        if (this != &other) {
             std::swap(m_ptr, other.m_ptr);
+            delete[] other.m_ptr;
+            other.m_ptr = nullptr;
+        }
     }
 
     fat_str& operator=(fat_str&& other) {
-        if (this != &other)
+        if (this != &other) {
             std::swap(m_ptr, other.m_ptr);
+            delete[] other.m_ptr;
+            other.m_ptr = nullptr;
+        }
         return *this;
     }
 
@@ -101,7 +107,7 @@ public:
 
     char& at(size_t pos) {
         if (pos >= size())
-            throw std::out_of_range("");
+            throw std::out_of_range("fat_str::at(size_t): index is out-of-range");
         size_t data_off = sizeof(uint32_t) * 2;
         return m_ptr[data_off + pos];
     }
@@ -153,7 +159,7 @@ public:
 
     void reserve(size_t new_cap) {
         if (new_cap > max_size())
-            throw std::length_error("");
+            throw std::length_error("fat_str::reserve(size_t): new capacity reached max_size(): 536870912 bytes");
         if (new_cap <= capacity())
             return;
         char *nptr = new char[sizeof(uint32_t) * 2 + new_cap + 1]();

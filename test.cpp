@@ -1,3 +1,4 @@
+#include <stdexcept>
 #include <utility>
 #include <cstdio>
 #include <vector>
@@ -94,4 +95,23 @@ int main(void)
     printf("%zu\n", fv.size());
     for (const fat_str::fat_str &str : fv)
         printf("%s\n", str.data());
+
+    {
+        fat_str::fat_str a{"from a"}, b{"from b"};
+        printf("a = %s\n", a.data());
+        printf("b = %s\n", b.data());
+        a = std::move(b);
+        printf("a = %s\n", a.data());
+        printf("b = %s\n", b.data()); // empty() == true
+        fat_str::fat_str c, d{std::move(c)};
+        printf("c = %s\n", c.data()); // empty() == true
+        printf("d = %s\n", d.data()); // empty() == true
+        try {
+            printf("char at 0 in c is %c\n", c.at(0));
+            printf("char at 0 in d is %c\n", d.at(0));
+        } catch (std::exception& e) {
+            printf("fail? %s\n", e.what());
+            return 1;
+        }
+    }
 }
