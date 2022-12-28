@@ -12,13 +12,17 @@ int main(void)
     if (str3 == str)
         printf("OK\n");
 
+    fat_str::fat_str str4 = "Goodbye world";
+
     printf("%s, %zu\n", str.data(), str.size());
     printf("%s, %zu\n", str2.data(), str2.size());
     printf("%s, %zu\n", str3.data(), str3.size());
+    printf("%s, %zu\n", str4.data(), str4.size());
 
     printf("f=%c, b=%c\n", str.front(), str.back());
     printf("f=%c, b=%c\n", str2.front(), str2.back());
     printf("f=%c, b=%c\n", str3.front(), str3.back());
+    printf("f=%c, b=%c\n", str4.front(), str4.back());
 
     // test copy ctor from empty str
     fat_str::fat_str empty, empty2{empty};
