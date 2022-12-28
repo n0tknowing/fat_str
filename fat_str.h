@@ -19,11 +19,8 @@ public:
             size = UINT32_C(536870912);
         m_ptr = new char[sizeof(uint32_t) + size + 1]();
         std::memcpy(m_ptr, &size, sizeof(uint32_t));
-        if (str != nullptr) {
-            m_ptr += sizeof(uint32_t);
-            std::memcpy(m_ptr, str, size);
-            m_ptr -= sizeof(uint32_t);
-        }
+        if (str != nullptr)
+            std::memcpy(m_ptr + sizeof(uint32_t), str, size);
     }
 
     fat_str(const fat_str& other) {
@@ -68,27 +65,16 @@ public:
     }
 
     fat_str(fat_str&& other) {
-        if (this != &other) {
-            size_t other_size = other.size();
-            m_ptr = new char[sizeof(uint32_t) + other_size + 1]();
-            size_t copy_size = sizeof(uint32_t) + other_size;
-            if (other_size > 0)
-                std::memcpy(m_ptr, other.m_ptr, copy_size);
-            std::memset(other.m_ptr, 0, copy_size);
+        if (this != &other && other.m_ptr != nullptr) {
+            m_ptr = other.m_ptr;
+            other.m_ptr = nullptr;
         }
     }
 
     fat_str& operator=(fat_str&& other) {
         if (this != &other && other.m_ptr != nullptr) {
-            size_t this_size = size();
-            size_t other_size = other.size();
-            if (this_size != other_size) {
-                delete[] m_ptr;
-                m_ptr = new char[sizeof(uint32_t) + other_size + 1]();
-            }
-            size_t copy_size = sizeof(uint32_t) + other_size;
-            std::memcpy(m_ptr, other.m_ptr, copy_size);
-            std::memset(other.m_ptr, 0, copy_size);
+            m_ptr = other.m_ptr;
+            other.m_ptr = nullptr;
         }
         return *this;
     }
