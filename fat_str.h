@@ -196,7 +196,6 @@ public:
         if (sz == 0 || sz == capacity())
             reserve(sz + 32);
         size_t pos = sizeof(uint32_t) * 2 + sz;
-        printf("push_back(): pos=%zu\n", pos);
         m_ptr[pos] = ch;
         // well....
         std::memcpy(&sz, m_ptr + sizeof(uint32_t), sizeof(uint32_t));
