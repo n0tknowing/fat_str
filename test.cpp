@@ -1,5 +1,6 @@
 #include <utility>
 #include <cstdio>
+#include <vector>
 #include "fat_str.h"
 
 int main(void)
@@ -87,4 +88,10 @@ int main(void)
     n = "how about exceed current capacity? aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
     printf("%s, %zu, %zu\n", n.data(), n.size(), n.capacity());
 
+    std::vector<fat_str::fat_str> fv{};
+    for (int i = 0; i < 5; i++)
+        fv.push_back("vector and fat_str");
+    printf("%zu\n", fv.size());
+    for (const fat_str::fat_str &str : fv)
+        printf("%s\n", str.data());
 }

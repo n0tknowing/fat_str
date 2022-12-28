@@ -1,3 +1,4 @@
+# this makefile is just for development
 CXX=clang++-14
 CXXFLAGS=-std=c++14 -Wall -Wextra -Werror -Wpedantic -O2 -g -fsanitize=address,undefined
 
