@@ -113,16 +113,16 @@ public:
         return m_ptr[sizeof(uint32_t) + pos];
     }
 
-    char& front() {
-        // UB if m_ptr is nullptr but it will returns '\0' if empty()
-        return m_ptr[sizeof(uint32_t)];
+    char front() {
+        return m_ptr ? m_ptr[sizeof(uint32_t)] : '\0';
     }
 
-    char& back() {
-        // UB if m_ptr is nullptr but it will returns '\0' if empty()
+    char back() {
+        char c = '\0';
         size_t sz = size();
-        sz = sz > 0 ? sz - 1 : 0;
-        return m_ptr[sizeof(uint32_t) + sz];
+        if (m_ptr != nullptr && sz > 0)
+            c = m_ptr[sizeof(uint32_t) + sz - 1];
+        return c;
     }
 
     const char *data() const {
