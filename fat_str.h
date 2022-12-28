@@ -168,7 +168,7 @@ public:
             size_t this_size = size();
             size_t data_off = sizeof(uint32_t) * 2;
             std::memcpy(nptr + sizeof(uint32_t), &this_size, sizeof(uint32_t));
-            std::memcpy(nptr + data_off, m_ptr, this_size);
+            std::memcpy(nptr + data_off, m_ptr + data_off, this_size);
             delete[] m_ptr;
         }
         m_ptr = nptr;
@@ -188,6 +188,31 @@ public:
         if (sz > 0) { // don't clear capacity
             size_t clr_size = sizeof(uint32_t) + sz;
             std::memset(m_ptr + sizeof(uint32_t), 0, clr_size);
+        }
+    }
+
+    void push_back(char ch) {
+        size_t sz = size();
+        if (sz == 0 || sz == capacity())
+            reserve(sz + 32);
+        size_t pos = sizeof(uint32_t) * 2 + sz;
+        printf("push_back(): pos=%zu\n", pos);
+        m_ptr[pos] = ch;
+        // well....
+        std::memcpy(&sz, m_ptr + sizeof(uint32_t), sizeof(uint32_t));
+        sz += 1;
+        std::memcpy(m_ptr + sizeof(uint32_t), &sz, sizeof(uint32_t));
+    }
+
+    void pop_back() {
+        size_t sz = size();
+        if (sz > 0) {
+            size_t pos = sizeof(uint32_t) * 2 + sz - 1;
+            m_ptr[pos] = 0;
+            // well....
+            std::memcpy(&sz, m_ptr + sizeof(uint32_t), sizeof(uint32_t));
+            sz -= 1;
+            std::memcpy(m_ptr + sizeof(uint32_t), &sz, sizeof(uint32_t));
         }
     }
 

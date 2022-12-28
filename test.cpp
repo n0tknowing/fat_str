@@ -121,4 +121,12 @@ int main(void)
     a.swap(b);
     printf("a = %s\n", a.data());
     printf("b = %s\n", b.data());
+    for (size_t i = 0; i < 5; i++) {
+        a.pop_back();
+        printf("a = %s, %zu, %zu\n", a.data(), a.size(), a.capacity());
+    }
+    for (size_t i = 0; i < 50; i++) {
+        a.push_back(n[i]);
+        printf("a = %s, %zu, %zu\n", a.data(), a.size(), a.capacity());
+    }
 }
