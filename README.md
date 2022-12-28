@@ -8,13 +8,14 @@ some pointer magic.
 
 ## Pointer structure
 
-`L` = Current length. (4 bytes, Max is 512 MiB)<br/>
-`DATA` = NUL (`\0`) terminated ASCII string.
+`C` = Capacity. (4 bytes)<br/>
+`L` = Current length. (4 bytes)<br/>
+`DATA` = NUL (`\0`) terminated ASCII string (0 to 512 MiB).
 
 ```
-+---------------+
-| LLLL |  DATA  |
-+---------------+
++----------------------+
+| CCCC | LLLL |  DATA  |
++----------------------+
 ```
 
 

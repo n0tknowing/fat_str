@@ -1,5 +1,5 @@
 CXX=clang++-14
-CXXFLAGS=-std=c++11 -Wall -Wextra -Werror -Wpedantic -O2 -g -fsanitize=address,undefined
+CXXFLAGS=-std=c++14 -Wall -Wextra -Werror -Wpedantic -O2 -g -fsanitize=address,undefined
 
 test:
 	${CXX} ${CXXFLAGS} test.cpp -o test
