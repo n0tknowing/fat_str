@@ -129,4 +129,7 @@ int main(void)
         a.push_back(n[i]);
         printf("a = %s, %zu, %zu\n", a.data(), a.size(), a.capacity());
     }
+
+    fat_str::fat_str e('e', 16);
+    printf("e = %s, %zu, %zu\n", e.data(), e.size(), e.capacity());
 }

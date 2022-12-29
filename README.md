@@ -26,6 +26,7 @@ class fat_str {
 public:
     fat_str();
     fat_str(const char* c_str);
+    fat_str(char ch, size_t count);
     fat_str(const fat_str& other);
     fat_str(fat_str&& other);
 
