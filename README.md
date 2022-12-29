@@ -31,6 +31,7 @@ public:
     fat_str(const fat_str& other);
     fat_str(fat_str&& other);
     fat_str(std::nullptr_t) = delete;
+    fat_str(std::nullptr_t, size_t) = delete;
 
     fat_str& operator=(const char* c_str);
     fat_str& operator=(const fat_str& other);

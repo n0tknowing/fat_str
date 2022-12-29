@@ -155,4 +155,8 @@ int main(void)
     //g = nullptr; works but you will leak memory
 
     delete g;
+
+    // compile error
+    //fat_str::fat_str h(nullptr, 12);
+    //printf("h = %s, %zu, %zu\n", h.data(), h.size(), h.capacity());
 }

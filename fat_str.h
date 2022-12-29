@@ -65,6 +65,7 @@ public:
     }
 
     fat_str(std::nullptr_t) = delete;
+    fat_str(std::nullptr_t, size_t) = delete;
 
     fat_str& operator=(const char *str) {
         size_t str_size = std::strlen(str);
