@@ -75,5 +75,16 @@ public:
 ```
 
 
+## Limitations
+
+- ASCII only.
+- Hard coded max size (512 MiB), you can't change this.
+
+Current limitations may change in the future, especially with ASCII only problem,
+because I have limited knowledge about other character sets (UTF-8, etc.).
+Another problem is ABI break, because it will change pointer structure and
+lead to bug (see commit 4c9e81eac3fbd042e5d30081f168d703f14f3944).
+
+
 ## See also
 - [antirez sds](https://github.com/antirez/sds) (C)
