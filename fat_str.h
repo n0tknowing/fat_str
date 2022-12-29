@@ -15,23 +15,33 @@ public:
     fat_str() {}
 
     fat_str(const char *str) {
-        size_t size = str ? std::strlen(str) : 0;
-        size_t data_off = sizeof(uint32_t) * 2;
+        size_t size = std::strlen(str);
         size_t cap = size < 32 ? 32 : size;
         if (cap > this->max_size())
-            throw std::length_error("fat_str::fat_str(const char*): string size reached max size: 536870912 bytes");
+            throw std::length_error("fat_str(const char*): string size reached max size: 536870912 bytes");
+        size_t data_off = sizeof(uint32_t) * 2;
         m_ptr = new char[data_off + cap + 1]();
         std::memcpy(m_ptr, &cap, sizeof(uint32_t)); // capacity
         std::memcpy(m_ptr + sizeof(uint32_t), &size, sizeof(uint32_t)); // length
-        if (str != nullptr) // data
-            std::memcpy(m_ptr + data_off, str, size);
+        std::memcpy(m_ptr + data_off, str, size); // data
+    }
+
+    fat_str(const char *str, size_t n) {
+        size_t cap = n < 32 ? 32 : n;
+        if (cap > this->max_size())
+            throw std::length_error("fat_str(const chat*, size_t): string size reached max size: 536870912 bytes");
+        size_t data_off = sizeof(uint32_t) * 2;
+        m_ptr = new char[data_off + cap + 1]();
+        std::memcpy(m_ptr, &cap, sizeof(uint32_t)); // capacity
+        std::memcpy(m_ptr + sizeof(uint32_t), &n, sizeof(uint32_t)); // length
+        std::memcpy(m_ptr + data_off, str, n); // data
     }
 
     fat_str(char ch, size_t count) {
-        size_t data_off = sizeof(uint32_t) * 2;
         size_t cap = count < 32 ? 32 : count;
         if (cap > this->max_size())
-            throw std::length_error("fat_str::fat_str(char, size_t): count reached max size: 536870912 bytes");
+            throw std::length_error("fat_str(char, size_t): count reached max size: 536870912 bytes");
+        size_t data_off = sizeof(uint32_t) * 2;
         m_ptr = new char[data_off + cap + 1]();
         std::memcpy(m_ptr, &cap, sizeof(uint32_t)); // capacity
         std::memcpy(m_ptr + sizeof(uint32_t), &count, sizeof(uint32_t)); // length
@@ -54,23 +64,10 @@ public:
         }
     }
 
-    fat_str& operator=(const fat_str& other) {
-        if (this != &other && other.m_ptr != nullptr) {
-            size_t this_cap = this->capacity();
-            size_t other_size = other.size();
-            size_t other_cap = other.capacity();
-            size_t copy_size = sizeof(uint32_t) * 2 + other_cap;
-            if (this_cap < other_size) {
-                delete[] m_ptr;
-                m_ptr = new char[copy_size + 1]();
-            }
-            std::memcpy(m_ptr, other.m_ptr, copy_size);
-        }
-        return *this;
-    }
+    fat_str(std::nullptr_t) = delete;
 
     fat_str& operator=(const char *str) {
-        size_t str_size = str ? std::strlen(str) : 0;
+        size_t str_size = std::strlen(str);
         if (str_size > this->max_size())
             throw std::length_error("fat_str::operator=(const char*): string size reached max_size(): 536870912 bytes");
         size_t this_cap = this->capacity();
@@ -85,8 +82,22 @@ public:
             std::memset(m_ptr + data_off + str_size, 0, this_size - str_size);
         }
         std::memcpy(m_ptr + sizeof(uint32_t), &str_size, sizeof(uint32_t)); // update length
-        if (str_size > 0) // update data if it's not empty
-            std::memcpy(m_ptr + data_off, str, str_size);
+        std::memcpy(m_ptr + data_off, str, str_size); // update data
+        return *this;
+    }
+
+    fat_str& operator=(const fat_str& other) {
+        if (this != &other && other.m_ptr != nullptr) {
+            size_t this_cap = this->capacity();
+            size_t other_size = other.size();
+            size_t other_cap = other.capacity();
+            size_t copy_size = sizeof(uint32_t) * 2 + other_cap;
+            if (this_cap < other_size) {
+                delete[] m_ptr;
+                m_ptr = new char[copy_size + 1]();
+            }
+            std::memcpy(m_ptr, other.m_ptr, copy_size);
+        }
         return *this;
     }
 
@@ -106,6 +117,8 @@ public:
         }
         return *this;
     }
+
+    fat_str& operator=(std::nullptr_t) = delete;
 
     ~fat_str() {
         if (m_ptr != nullptr) {
@@ -234,18 +247,25 @@ public:
     // ===== Other =====
 
     bool operator==(const fat_str& other) const {
-        bool result = true;
-        if (this != &other) {
-            const char *this_str = m_ptr ? m_ptr + sizeof(uint32_t) : "";
-            const char *other_str = other.m_ptr ? other.m_ptr + sizeof(uint32_t) : "";
+        bool result = false;
+        if (this == &other) {
+            result = true;
+        } else if (m_ptr != nullptr && other.m_ptr != nullptr) {
+            size_t data_off = sizeof(uint32_t) * 2;
+            const char *this_str = m_ptr + data_off;
+            const char *other_str = other.m_ptr + data_off;
             result = strcmp(this_str, other_str) == 0;
         }
         return result;
     }
 
     bool operator==(const char *str) const {
-        const char *this_str = m_ptr ? m_ptr + sizeof(uint32_t) : "";
-        return strcmp(this_str, str ? str : "") == 0;
+        bool result = false;
+        if (m_ptr != nullptr && str != nullptr) {
+            const char *this_str = m_ptr + sizeof(uint32_t) * 2;
+            result = strcmp(this_str, str) == 0;
+        }
+        return result;
     }
 
     bool operator!=(const fat_str& other) const {

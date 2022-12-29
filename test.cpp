@@ -132,4 +132,27 @@ int main(void)
 
     fat_str::fat_str e('e', 16);
     printf("e = %s, %zu, %zu\n", e.data(), e.size(), e.capacity());
+
+    // compile error
+    //e = nullptr;
+    //printf("e = %s, %zu, %zu\n", e.data(), e.size(), e.capacity());
+
+    e = ""; // clear
+    printf("e = %s, %zu, %zu\n", e.data(), e.size(), e.capacity());
+
+    if (e == nullptr)
+        printf("???\n");
+
+    // compile error
+    //fat_str::fat_str f{nullptr};
+    //printf("f = %s, %zu, %zu\n", f.data(), f.size(), f.capacity());
+
+    fat_str::fat_str *g = new fat_str::fat_str();
+    printf("g = %s, %zu, %zu\n", g->data(), g->size(), g->capacity());
+    g->push_back('g');
+    printf("g = %s, %zu, %zu\n", g->data(), g->size(), g->capacity());
+
+    //g = nullptr; works but you will leak memory
+
+    delete g;
 }

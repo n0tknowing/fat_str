@@ -26,13 +26,16 @@ class fat_str {
 public:
     fat_str();
     fat_str(const char* c_str);
+    fat_str(const char* c_str, size_t count);
     fat_str(char ch, size_t count);
     fat_str(const fat_str& other);
     fat_str(fat_str&& other);
+    fat_str(std::nullptr_t) = delete;
 
     fat_str& operator=(const char* c_str);
     fat_str& operator=(const fat_str& other);
     fat_str& operator=(fat_str&& other);
+    fat_str& operator=(std::nullptr_t) = delete;
 
     char& at(size_t pos); // bound-checked
     char& operator[](size_t pos);
