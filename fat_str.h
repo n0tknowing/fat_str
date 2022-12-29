@@ -190,8 +190,6 @@ public:
             this->reserve(sz + (sz ? 16 : 32));
         size_t pos = sizeof(uint32_t) * 2 + sz;
         m_ptr[pos] = ch;
-        // well....
-        std::memcpy(&sz, m_ptr + sizeof(uint32_t), sizeof(uint32_t));
         sz += 1;
         std::memcpy(m_ptr + sizeof(uint32_t), &sz, sizeof(uint32_t));
     }
@@ -201,8 +199,6 @@ public:
         if (sz > 0) {
             size_t pos = sizeof(uint32_t) * 2 + sz - 1;
             m_ptr[pos] = 0;
-            // well....
-            std::memcpy(&sz, m_ptr + sizeof(uint32_t), sizeof(uint32_t));
             sz -= 1;
             std::memcpy(m_ptr + sizeof(uint32_t), &sz, sizeof(uint32_t));
         }
