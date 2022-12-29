@@ -45,7 +45,7 @@ public:
     fat_str& assign(char ch);
     fat_str& assign(char ch, size_t count);
     fat_str& assign(const char fat_str& other);
-    fat_str& assign(const char fat_str& other, count);
+    fat_str& assign(const char fat_str& other, size_t count);
     fat_str& assign(std::nullptr_t) = delete;
     fat_str& assign(std::nullptr_t, size_t) = delete;
 
@@ -53,7 +53,7 @@ public:
     char& operator[](size_t pos); // UB if pos >= size()
     char front() const; // copy not reference
     char back() const; // copy not reference
-    const char* data() const;
+    const char* data() const; // NUL-terminated
 
     bool empty() const;
     size_t size() const;
