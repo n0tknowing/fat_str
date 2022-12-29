@@ -14,7 +14,7 @@ class fat_str {
 public:
     // ===== Constructors and Destructors =====
 
-    fat_str() {}
+    fat_str() noexcept {}
     fat_str(const char *str, size_t n) : fat_str(str, n, false) {}
     fat_str(char ch, size_t count) : fat_str(&ch, count, true) {}
     fat_str(const char *str) : fat_str(str, std::strlen(str), false) {}
@@ -42,15 +42,15 @@ public:
     // ===== Assign =====
 
     fat_str& assign(const char *str, size_t count) {
-        return assign_impl(str, count);
+        return assign_impl(str, count, /* check_count */ true, /* from_char */ false);
     }
 
     fat_str& assign(const char *str) {
-        return assign_impl(str, std::strlen(str), false);
+        return assign_impl(str, std::strlen(str), false, false);
     }
 
     fat_str& assign(char ch) {
-        return assign_impl(&ch, 1, false);
+        return assign_impl(&ch, 1, false, false);
     }
 
     fat_str& assign(char ch, size_t count) {
@@ -59,13 +59,13 @@ public:
 
     fat_str& assign(const fat_str& other) {
         if (this != &other)
-            *this = assign_impl(other.data(), other.size(), false);
+            *this = assign_impl(other.data(), other.size(), false, false);
         return *this;
     }
 
     fat_str& assign(const fat_str& other, size_t count) {
         if (this != &other)
-            *this = assign_impl(other.data(), std::min(other.size(), count), false);
+            *this = assign_impl(other.data(), std::min(other.size(), count), false, false);
         return *this;
     }
 
@@ -98,25 +98,25 @@ public:
 
     // ===== Element access =====
 
-    char& at(size_t pos) {
+    constexpr char& at(size_t pos) {
         if (pos >= this->size())
             throw std::out_of_range("fat_str::at(size_t): index is out-of-range");
         size_t data_off = sizeof(uint32_t) * 2;
         return m_ptr[data_off + pos];
     }
 
-    char& operator[](size_t pos) {
+    constexpr char& operator[](size_t pos) noexcept {
         // UB if m_ptr is nullptr and pos >= size()
         size_t data_off = sizeof(uint32_t) * 2;
         return m_ptr[data_off + pos];
     }
 
-    char front() const {
+    constexpr char front() const noexcept {
         size_t data_off = sizeof(uint32_t) * 2;
         return m_ptr ? m_ptr[data_off] : '\0';
     }
 
-    char back() const {
+    constexpr char back() const noexcept {
         char c = '\0';
         size_t sz = this->size(), data_off = sizeof(uint32_t) * 2;
         if (sz > 0)
@@ -124,29 +124,29 @@ public:
         return c;
     }
 
-    const char *data() const {
+    constexpr const char *data() const noexcept {
         size_t data_off = sizeof(uint32_t) * 2;
         return m_ptr ? static_cast<const char*>(m_ptr + data_off) : "";
     }
 
     // ===== Capacity =====
 
-    bool empty() const {
+    constexpr bool empty() const noexcept {
         return this->size() == 0;
     }
 
-    size_t size() const {
+    constexpr size_t size() const noexcept {
         size_t size = 0;
         if (m_ptr != nullptr)
             std::memcpy(&size, m_ptr + sizeof(uint32_t), sizeof(uint32_t));
         return size;
     }
 
-    size_t length() const {
+    constexpr size_t length() const noexcept {
         return this->size();
     }
 
-    size_t max_size() const {
+    constexpr size_t max_size() const noexcept {
         return UINT32_C(536870912);
     }
 
@@ -167,7 +167,7 @@ public:
         m_ptr = nptr;
     }
 
-    size_t capacity() const {
+    constexpr size_t capacity() const noexcept {
         size_t cap = 0;
         if (m_ptr != nullptr)
             std::memcpy(&cap, m_ptr, sizeof(uint32_t));
@@ -176,7 +176,7 @@ public:
 
     // ===== Operations =====
 
-    void clear() {
+    constexpr void clear() noexcept {
         size_t sz = size();
         if (sz > 0) { // don't clear capacity
             size_t clr_size = sizeof(uint32_t) + sz;
@@ -184,7 +184,7 @@ public:
         }
     }
 
-    void push_back(char ch) {
+    constexpr void push_back(char ch) noexcept {
         size_t sz = this->size();
         if (sz == 0 || sz == capacity())
             this->reserve(sz + (sz ? 16 : 32));
@@ -196,7 +196,7 @@ public:
         std::memcpy(m_ptr + sizeof(uint32_t), &sz, sizeof(uint32_t));
     }
 
-    void pop_back() {
+    constexpr void pop_back() noexcept {
         size_t sz = size();
         if (sz > 0) {
             size_t pos = sizeof(uint32_t) * 2 + sz - 1;
@@ -208,14 +208,14 @@ public:
         }
     }
 
-    void swap(fat_str& other) {
+    constexpr void swap(fat_str& other) noexcept {
         if (this != &other)
             std::swap(m_ptr, other.m_ptr);
     }
 
     // ===== Other =====
 
-    bool operator==(const fat_str& other) const {
+    constexpr bool operator==(const fat_str& other) const noexcept {
         bool result = false;
         if (this == &other) {
             result = true;
@@ -228,7 +228,7 @@ public:
         return result;
     }
 
-    bool operator==(const char *str) const {
+    constexpr bool operator==(const char *str) const noexcept {
         bool result = false;
         if (m_ptr != nullptr && str != nullptr) {
             const char *this_str = m_ptr + sizeof(uint32_t) * 2;
@@ -237,11 +237,11 @@ public:
         return result;
     }
 
-    bool operator!=(const fat_str& other) const {
+    constexpr bool operator!=(const fat_str& other) const noexcept {
         return !(*this == other);
     }
 
-    bool operator!=(const char *str) const {
+    constexpr bool operator!=(const char *str) const noexcept {
         return !(*this == str);
     }
 
@@ -264,7 +264,7 @@ private:
         }
     }
 
-    fat_str& assign_impl(const char *str, size_t count, bool check_count = true, bool from_char = false) {
+    fat_str& assign_impl(const char *str, size_t count, bool check_count, bool from_char) {
         if (check_count)
             count = std::min(std::strlen(str), count);
         if (count > this->max_size())

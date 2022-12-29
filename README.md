@@ -25,7 +25,7 @@ some pointer magic.
 ```cpp
 class fat_str {
 public:
-    fat_str();
+    fat_str() noexcept;
     fat_str(const char* c_str);
     fat_str(const char* c_str, size_t count);
     fat_str(char ch, size_t count);
@@ -49,28 +49,28 @@ public:
     fat_str& assign(std::nullptr_t) = delete;
     fat_str& assign(std::nullptr_t, size_t) = delete;
 
-    char& at(size_t pos); // bound-checked
-    char& operator[](size_t pos); // UB if pos >= size()
-    char front() const; // copy not reference
-    char back() const; // copy not reference
-    const char* data() const; // NUL-terminated
+    constexpr char& at(size_t pos); // bound-checked
+    constexpr char& operator[](size_t pos) noexcept; // UB if pos >= size()
+    constexpr char front() const noexcept; // copy not reference
+    constexpr char back() const noexcept; // copy not reference
+    constexpr const char* data() const noexcept; // NUL-terminated
 
-    bool empty() const;
-    size_t size() const;
-    size_t length() const;
-    size_t max_size() const;
+    constexpr bool empty() const noexcept;
+    constexpr size_t size() const noexcept;
+    constexpr size_t length() const noexcept;
+    constexpr size_t max_size() const noexcept;
+    constexpr size_t capacity() const noexcept;
     void reserve(size_t new_cap);
-    size_t capacity() const;
 
-    void clear();
-    void push_back(char ch);
-    void pop_back();
-    void swap(fat_str& other);
+    constexpr void clear() noexcept;
+    constexpr void push_back(char ch) noexcept;
+    constexpr void pop_back() noexcept;
+    constexpr void swap(fat_str& other) noexcept;
 
-    bool operator==(const char* c_str) const;
-    bool operator==(const fat_str& other) const;
-    bool operator!=(const char* c_str) const;
-    bool operator!=(const fat_str& other) const;
+    constexpr bool operator==(const char* c_str) const noexcept;
+    constexpr bool operator==(const fat_str& other) const noexcept;
+    constexpr bool operator!=(const char* c_str) const noexcept;
+    constexpr bool operator!=(const fat_str& other) const noexcept;
 };
 ```
 
