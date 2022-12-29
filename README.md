@@ -1,5 +1,6 @@
 # fat\_str - C++ string managed by fat pointer
 
+
 ## Why
 
 Purely educational purpose (and having fun), improving my C++ skill by doing
@@ -14,9 +15,9 @@ some pointer magic.
 +----------------------+
 ```
 
-`C` = Capacity. (4 bytes)<br/>
-`L` = Current length. (4 bytes)<br/>
-`DATA` = NUL (`\0`) terminated ASCII string (0 to 512 MiB).
+`C` = Capacity. (4 bytes, start at offset 0)<br/>
+`L` = Current length. (4 bytes, start at offset 4)<br/>
+`DATA` = NUL (`\0`) terminated ASCII string (0 to 512 MiB, start at offset 8).
 
 
 ## (Current) Public API
@@ -29,6 +30,7 @@ public:
     fat_str(const char* c_str, size_t count);
     fat_str(char ch, size_t count);
     fat_str(const fat_str& other);
+    fat_str(const fat_str& other, size_t count);
     fat_str(fat_str&& other);
     fat_str(std::nullptr_t) = delete;
     fat_str(std::nullptr_t, size_t) = delete;

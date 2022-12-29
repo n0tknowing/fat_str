@@ -1,5 +1,4 @@
-// pointer shenanigans, but it's fun.
-// alignment? well... let c++ allocator do the job :-)
+// memcpy hell
 
 #include <memory>
 #include <stdexcept>
@@ -12,60 +11,37 @@ class fat_str {
 public:
     // ===== Member functions =====
 
-    fat_str() {}
-
-    fat_str(const char *str) {
-        size_t size = std::strlen(str);
-        size_t cap = size < 32 ? 32 : size;
-        if (cap > this->max_size())
-            throw std::length_error("fat_str(const char*): string size reached max size: 536870912 bytes");
-        size_t data_off = sizeof(uint32_t) * 2;
-        m_ptr = new char[data_off + cap + 1]();
-        std::memcpy(m_ptr, &cap, sizeof(uint32_t)); // capacity
-        std::memcpy(m_ptr + sizeof(uint32_t), &size, sizeof(uint32_t)); // length
-        std::memcpy(m_ptr + data_off, str, size); // data
-    }
-
     fat_str(const char *str, size_t n) {
         size_t cap = n < 32 ? 32 : n;
         if (cap > this->max_size())
-            throw std::length_error("fat_str(const chat*, size_t): string size reached max size: 536870912 bytes");
+            throw std::length_error("fat_str(): string size reached max size: 536870912 bytes");
         size_t data_off = sizeof(uint32_t) * 2;
         m_ptr = new char[data_off + cap + 1]();
         std::memcpy(m_ptr, &cap, sizeof(uint32_t)); // capacity
         std::memcpy(m_ptr + sizeof(uint32_t), &n, sizeof(uint32_t)); // length
-        std::memcpy(m_ptr + data_off, str, n); // data
+        if (n > 0) // happen after moved
+            std::memcpy(m_ptr + data_off, str, n); // data
     }
 
+    fat_str(const char *str) : fat_str(str, std::strlen(str)) {}
+    fat_str(const fat_str& other) : fat_str(other.data(), other.size()) {}
+    fat_str(const fat_str& other, size_t count) : fat_str(other.data(), std::min(other.size(), count)) {}
+
+    fat_str(std::nullptr_t) = delete;
+    fat_str(std::nullptr_t, size_t) = delete;
+
+    // FIXME: refactor these two ctors
+    fat_str() {}
     fat_str(char ch, size_t count) {
         size_t cap = count < 32 ? 32 : count;
         if (cap > this->max_size())
-            throw std::length_error("fat_str(char, size_t): count reached max size: 536870912 bytes");
+            throw std::length_error("fat_str(): count reached max size: 536870912 bytes");
         size_t data_off = sizeof(uint32_t) * 2;
         m_ptr = new char[data_off + cap + 1]();
         std::memcpy(m_ptr, &cap, sizeof(uint32_t)); // capacity
         std::memcpy(m_ptr + sizeof(uint32_t), &count, sizeof(uint32_t)); // length
         std::memset(m_ptr + data_off, ch, count); // data
     }
-
-    fat_str(const fat_str& other) {
-        if (this != &other) {
-            size_t other_size = other.size();
-            size_t other_cap = other.capacity();
-            size_t data_off = sizeof(uint32_t) * 2;
-            other_cap = other_cap < 32 ? 32 : other_cap;
-            m_ptr = new char[data_off + other_cap + 1]();
-            if (other_size > 0) {
-                const size_t copy_size = data_off + other.size();
-                std::memcpy(m_ptr, other.m_ptr, copy_size);
-            } else {
-                std::memcpy(m_ptr, &other_cap, sizeof(uint32_t));
-            }
-        }
-    }
-
-    fat_str(std::nullptr_t) = delete;
-    fat_str(std::nullptr_t, size_t) = delete;
 
     fat_str& operator=(const char *str) {
         size_t str_size = std::strlen(str);

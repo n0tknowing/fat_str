@@ -8,23 +8,23 @@ int main(void)
 {
     fat_str::fat_str str{"Hello fat_str"}, str2{"Hello world"};
     if (str != str2)
-        printf("%s, %s\n", str.data(), str2.data());
+        printf("str=%s, str2=%s\n", str.data(), str2.data());
 
     fat_str::fat_str str3{str};
     if (str3 == str)
-        printf("OK\n");
+        printf("[OK] str=%s, str3=%s\n", str.data(), str3.data());
 
     fat_str::fat_str str4 = "Goodbye world";
 
-    printf("%s, %zu, %zu\n", str.data(), str.size(), str.capacity());
-    printf("%s, %zu, %zu\n", str2.data(), str2.size(), str2.capacity());
-    printf("%s, %zu, %zu\n", str3.data(), str3.size(), str3.capacity());
-    printf("%s, %zu, %zu\n", str4.data(), str4.size(), str4.capacity());
+    printf("str = %s, %zu, %zu\n", str.data(), str.size(), str.capacity());
+    printf("str2 = %s, %zu, %zu\n", str2.data(), str2.size(), str2.capacity());
+    printf("str3 = %s, %zu, %zu\n", str3.data(), str3.size(), str3.capacity());
+    printf("str4 = %s, %zu, %zu\n", str4.data(), str4.size(), str4.capacity());
 
-    printf("f=%c, b=%c\n", str.front(), str.back());
-    printf("f=%c, b=%c\n", str2.front(), str2.back());
-    printf("f=%c, b=%c\n", str3.front(), str3.back());
-    printf("f=%c, b=%c\n", str4.front(), str4.back());
+    printf("str = f=%c, b=%c\n", str.front(), str.back());
+    printf("str2 = f=%c, b=%c\n", str2.front(), str2.back());
+    printf("str3 = f=%c, b=%c\n", str3.front(), str3.back());
+    printf("str4 = f=%c, b=%c\n", str4.front(), str4.back());
 
     // test copy ctor from empty str
     fat_str::fat_str empty, empty2{empty};
@@ -34,30 +34,30 @@ int main(void)
     }
 
     fat_str::fat_str cp{"12345678910"};
-    printf("%s, %zu, %zu\n", cp.data(), cp.size(), cp.capacity());
+    printf("cp = %s, %zu, %zu\n", cp.data(), cp.size(), cp.capacity());
 
     // copy from 'str2' to test copy assignment with same size
     cp = str2;
     if (cp == str2) {
-        printf("OK\n");
-        printf("%s, %zu, %zu\n", cp.data(), cp.size(), cp.capacity());
-        printf("f=%c, b=%c\n", cp.front(), cp.back());
+        printf("[OK], 'cp' is same as 'str2'\n");
+        printf("cp = %s, %zu, %zu\n", cp.data(), cp.size(), cp.capacity());
+        printf("cp = f=%c, b=%c\n", cp.front(), cp.back());
     }
 
     // copy from 'str3' to test copy assignment with size less than str3
     cp = str3;
     if (cp == str3) {
-        printf("OK\n");
-        printf("%s, %zu, %zu\n", cp.data(), cp.size(), cp.capacity());
-        printf("f=%c, b=%c\n", cp.front(), cp.back());
+        printf("[OK], 'cp' is same as 'str3'\n");
+        printf("cp = %s, %zu, %zu\n", cp.data(), cp.size(), cp.capacity());
+        printf("cp = f=%c, b=%c\n", cp.front(), cp.back());
     }
 
     // do nothing
     cp = empty;
     if (cp == str3) {
-        printf("OK\n");
-        printf("%s, %zu, %zu\n", cp.data(), cp.size(), cp.capacity());
-        printf("f=%c, b=%c\n", cp.front(), cp.back());
+        printf("[OK], 'cp' do nothing with empty fat_str\n");
+        printf("cp = %s, %zu, %zu\n", cp.data(), cp.size(), cp.capacity());
+        printf("cp = f=%c, b=%c\n", cp.front(), cp.back());
     }
 
     // test move ctor and assignment
@@ -73,28 +73,28 @@ int main(void)
     printf("  mv1=%s, mv2=%s, mv3=%s\n", mv1.data(), mv2.data(), mv3.data());
 
     if (mv3 == "from mv1")
-        printf("OK\n");
+        printf("[OK], 'mv3' is from 'mv1'\n");
 
     fat_str::fat_str n;
     n.reserve(512);
-    printf("%s, %zu, %zu\n", n.data(), n.size(), n.capacity());
+    printf("n = %s, %zu, %zu\n", n.data(), n.size(), n.capacity());
     n = "does this work?";
-    printf("%s, %zu, %zu\n", n.data(), n.size(), n.capacity());
+    printf("n = %s, %zu, %zu\n", n.data(), n.size(), n.capacity());
     n = "how about this?";
-    printf("%s, %zu, %zu\n", n.data(), n.size(), n.capacity());
+    printf("n = %s, %zu, %zu\n", n.data(), n.size(), n.capacity());
     n = "and this?";
-    printf("%s, %zu, %zu\n", n.data(), n.size(), n.capacity());
+    printf("n = %s, %zu, %zu\n", n.data(), n.size(), n.capacity());
     n = "oooooooooooooooooooooohhhhh how about string longer than 32 bytes?";
-    printf("%s, %zu, %zu\n", n.data(), n.size(), n.capacity());
+    printf("n = %s, %zu, %zu\n", n.data(), n.size(), n.capacity());
     n = "how about exceed current capacity? aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-    printf("%s, %zu, %zu\n", n.data(), n.size(), n.capacity());
+    printf("n = %s, %zu, %zu\n", n.data(), n.size(), n.capacity());
 
     std::vector<fat_str::fat_str> fv{};
     for (int i = 0; i < 5; i++)
         fv.push_back("vector and fat_str");
-    printf("%zu\n", fv.size());
+    printf("vector size = %zu\n", fv.size());
     for (const fat_str::fat_str &str : fv)
-        printf("%s\n", str.data());
+        printf("%s, %zu, %zu\n", str.data(), str.size(), str.capacity());
 
     fat_str::fat_str a{"from a"}, b{"from b"};
     printf("a = %s\n", a.data());
@@ -159,4 +159,11 @@ int main(void)
     // compile error
     //fat_str::fat_str h(nullptr, 12);
     //printf("h = %s, %zu, %zu\n", h.data(), h.size(), h.capacity());
+
+    fat_str::fat_str h("from hhhh", 6);
+    printf("h = %s, %zu, %zu\n", h.data(), h.size(), h.capacity());
+
+    fat_str::fat_str i(h, 60);
+    if (i == h)
+        printf("i = %s, %zu, %zu\n", i.data(), i.size(), i.capacity());
 }
