@@ -6,6 +6,8 @@
 
 int main(void)
 {
+    printf("sizeof(fat_str::fat_str) = %zu\n\n", sizeof(fat_str::fat_str));
+
     fat_str::fat_str str{"Hello fat_str"}, str2{"Hello world"};
     if (str != str2)
         printf("str=%s, str2=%s\n", str.data(), str2.data());
@@ -149,11 +151,16 @@ int main(void)
 
     fat_str::fat_str *g = new fat_str::fat_str();
     printf("g = %s, %zu, %zu\n", g->data(), g->size(), g->capacity());
-    g->push_back('g');
+    g->assign('g');
+    printf("g = %s, %zu, %zu\n", g->data(), g->size(), g->capacity());
+    g->assign("from assign()");
+    printf("g = %s, %zu, %zu\n", g->data(), g->size(), g->capacity());
+    g->assign(e);
+    printf("g = %s, %zu, %zu\n", g->data(), g->size(), g->capacity());
+    g->assign('g', 16);
     printf("g = %s, %zu, %zu\n", g->data(), g->size(), g->capacity());
 
     //g = nullptr; works but you will leak memory
-
     delete g;
 
     // compile error
@@ -166,4 +173,8 @@ int main(void)
     fat_str::fat_str i(h, 60);
     if (i == h)
         printf("i = %s, %zu, %zu\n", i.data(), i.size(), i.capacity());
+
+    // compiler error
+    //i.assign(nullptr);
+    //i.assign(nullptr, 1000000);
 }

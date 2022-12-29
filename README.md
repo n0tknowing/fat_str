@@ -40,10 +40,19 @@ public:
     fat_str& operator=(fat_str&& other);
     fat_str& operator=(std::nullptr_t) = delete;
 
+    fat_str& assign(const char* c_str);
+    fat_str& assign(const char* c_str, size_t count);
+    fat_str& assign(char ch);
+    fat_str& assign(char ch, size_t count);
+    fat_str& assign(const char fat_str& other);
+    fat_str& assign(const char fat_str& other, count);
+    fat_str& assign(std::nullptr_t) = delete;
+    fat_str& assign(std::nullptr_t, size_t) = delete;
+
     char& at(size_t pos); // bound-checked
-    char& operator[](size_t pos);
-    char front() const;
-    char back() const;
+    char& operator[](size_t pos); // UB if pos >= size()
+    char front() const; // copy not reference
+    char back() const; // copy not reference
     const char* data() const;
 
     bool empty() const;
