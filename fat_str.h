@@ -50,7 +50,7 @@ public:
     }
 
     fat_str& assign(char ch) {
-        return assign_impl(&ch, 1, false, false);
+        return assign_impl(&ch, 1, false, true);
     }
 
     fat_str& assign(char ch, size_t count) {
@@ -215,7 +215,7 @@ public:
     }
 
     fat_str& append(char ch) {
-        return append_impl(&ch, 1, false, false, false);
+        return append_impl(&ch, 1, false, true, false);
     }
 
     fat_str& append(char ch, size_t count) {
@@ -248,7 +248,7 @@ public:
     }
 
     fat_str& operator+=(char ch) {
-        return append_impl(&ch, 1, false, false, false);
+        return append_impl(&ch, 1, false, true, false);
     }
 
     fat_str& operator+=(fat_str& other) {
@@ -331,10 +331,14 @@ private:
             std::memset(m_ptr + m_data_offset + count, 0, this_size - count);
         }
         std::memcpy(m_ptr + sizeof(uint32_t), &count, sizeof(uint32_t)); // update length
-        if (from_char)
-            std::memset(m_ptr + m_data_offset, str[0], count);
-        else
+        if (from_char) {
+            if (count == 1)
+                m_ptr[m_data_offset] = str[0];
+            else
+                std::memset(m_ptr + m_data_offset, str[0], count);
+        } else {
             std::memcpy(m_ptr + m_data_offset, str, count);
+        }
         return *this;
     }
 
@@ -348,20 +352,28 @@ private:
         size_t this_size = this->size();
         const size_t this_cap = this->capacity();
         const size_t total_size = this_size + count;
-        char *old_str{};
+        char old_ch, *old_str{};
         if (this_cap < total_size) {
             if (is_this) { // save old string if 'str' is from 'this'
-                old_str = strndup(str, count);
-                if (old_str == nullptr)
-                    throw std::runtime_error("fat_str::append(): unable to allocate more memory");
+                if (count == 1) {
+                    old_ch = str[0];
+                } else {
+                    old_str = strndup(str, count);
+                    if (old_str == nullptr)
+                        throw std::runtime_error("fat_str::append(): unable to allocate more memory");
+                }
             }
             this->reserve(total_size + this_cap);
         }
         std::memcpy(m_ptr + sizeof(uint32_t), &total_size, sizeof(uint32_t));
-        if (from_char)
-            std::memset(m_ptr + m_data_offset + this_size, is_this ? old_str[0] : str[0], count);
-        else
+        if (from_char) {
+            if (count == 1)
+                m_ptr[m_data_offset + this_size] = is_this ? old_ch : str[0];
+            else
+                std::memset(m_ptr + m_data_offset + this_size, is_this ? old_ch : str[0], count);
+        } else {
             std::memcpy(m_ptr + m_data_offset + this_size, is_this ? old_str : str, count);
+        }
         if (is_this)
             std::free(old_str);
         return *this;
