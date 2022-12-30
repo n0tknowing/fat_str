@@ -67,6 +67,20 @@ public:
     constexpr void pop_back() noexcept;
     constexpr void swap(fat_str& other) noexcept;
 
+    fat_str& append(const char* c_str);
+    fat_str& append(const char* c_str, size_t count);
+    fat_str& append(char ch);
+    fat_str& append(char ch, size_t count);
+    fat_str& append(const fat_str& other);
+    fat_str& append(const fat_str& other, size_t count);
+    fat_str& append(std::nullptr_t) = delete;
+    fat_str& append(std::nullptr_t, size_t) = delete;
+
+    fat_str& operator+=(const char* c_str);
+    fat_str& operator+=(char ch);
+    fat_str& operator+=(const fat_str& other);
+    fat_str& operator+=(std::nullptr_t) = delete;
+
     constexpr bool operator==(const char* c_str) const noexcept;
     constexpr bool operator==(const fat_str& other) const noexcept;
     constexpr bool operator!=(const char* c_str) const noexcept;

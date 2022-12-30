@@ -159,6 +159,10 @@ int main(void)
     printf("g = %s, %zu, %zu\n", g->data(), g->size(), g->capacity());
     g->assign('g', 16);
     printf("g = %s, %zu, %zu\n", g->data(), g->size(), g->capacity());
+    g->assign(d); // do nothing
+    printf("g = %s, %zu, %zu\n", g->data(), g->size(), g->capacity());
+    g->assign(d, 1000000); // do nothing
+    printf("g = %s, %zu, %zu\n", g->data(), g->size(), g->capacity());
 
     //g = nullptr; works but you will leak memory
     delete g;
@@ -177,4 +181,30 @@ int main(void)
     // compiler error
     //i.assign(nullptr);
     //i.assign(nullptr, 1000000);
+
+    i.append("test append 1 ").append("test append 2");
+    printf("i = %s, %zu, %zu\n", i.data(), i.size(), i.capacity());
+    i.append('+');
+    i.append('i', 30);
+    printf("i = %s, %zu, %zu\n", i.data(), i.size(), i.capacity());
+
+    fat_str::fat_str j{std::move(i)};
+    printf("i = %s, %zu, %zu\n", i.data(), i.size(), i.capacity());
+    printf("j = %s, %zu, %zu\n", j.data(), j.size(), j.capacity());
+
+    i.append("test append again after moved");
+    printf("i = %s, %zu, %zu\n", i.data(), i.size(), i.capacity());
+    i.append(", only c++ that appended", 10);
+    printf("i = %s, %zu, %zu\n", i.data(), i.size(), i.capacity());
+    i.append(i);
+    printf("i = %s, %zu, %zu\n", i.data(), i.size(), i.capacity());
+    i += i;
+    printf("i = %s, %zu, %zu\n", i.data(), i.size(), i.capacity());
+    i.append(i.data());
+    printf("i = %s, %zu, %zu\n", i.data(), i.size(), i.capacity());
+    i += i.data();
+    printf("i = %s, %zu, %zu\n", i.data(), i.size(), i.capacity());
+    i += 'o';
+    i += n;
+    printf("i = %s, %zu, %zu\n", i.data(), i.size(), i.capacity());
 }
