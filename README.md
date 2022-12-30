@@ -79,6 +79,9 @@ public:
 
 - ASCII only.
 - Hard coded max size (512 MiB), you can't change this.
+- Not sure if this categorized as limitation, but if you trying to allocate
+  small string, it always allocate 32 bytes even though your string is just
+  8 bytes or 4 bytes or even just 1 byte, this applies to `reserve()` too.
 
 Current limitations may change in the future, especially with ASCII only problem,
 because I have limited knowledge about other character sets (UTF-8, etc.).
