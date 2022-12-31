@@ -323,10 +323,11 @@ private:
         const size_t this_cap = this->capacity();
         const size_t this_size = this->size();
         if (this_cap < count) { // not enough space to hold new string
-            delete[] m_ptr;
             const size_t cap = count < 32 ? 32 : count;
-            m_ptr = new char[m_data_offset + cap + 1]();
-            std::memcpy(m_ptr, &cap, sizeof(uint32_t)); // update capacity
+            char *nptr = new char[m_data_offset + cap + 1]();
+            std::memcpy(nptr, &cap, sizeof(uint32_t)); // update capacity
+            delete[] m_ptr;
+            m_ptr = nptr;
         } else if (this_size > count) { // zero out unused bytes
             std::memset(m_ptr + m_data_offset + count, 0, this_size - count);
         }
