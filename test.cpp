@@ -4,8 +4,7 @@
 #include <vector>
 #include "fat_str.h"
 
-int main(void)
-{
+int main() {
     printf("sizeof(fat_str::fat_str) = %zu\n\n", sizeof(fat_str::fat_str));
 
     fat_str::fat_str str{"Hello fat_str"}, str2{"Hello world"};
