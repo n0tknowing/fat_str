@@ -352,7 +352,7 @@ private:
         size_t this_size = this->size();
         const size_t this_cap = this->capacity();
         const size_t total_size = this_size + count;
-        char old_ch, *old_str{};
+        char old_ch{}, *old_str{};
         if (this_cap < total_size) {
             if (is_this) { // save old string if 'str' is from 'this'
                 if (count == 1) {
