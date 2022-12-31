@@ -6,7 +6,6 @@
 #include <memory>
 #include <stdexcept>
 #include <utility>
-#include <cstring>
 #include <cstdint>
 
 namespace fat_str {
@@ -17,7 +16,7 @@ public:
     fat_str() noexcept {}
     fat_str(const char *str, size_t n) : fat_str(str, n, false) {}
     fat_str(char ch, size_t count) : fat_str(&ch, count, true) {}
-    fat_str(const char *str) : fat_str(str, std::strlen(str), false) {}
+    fat_str(const char *str) : fat_str(str, __builtin_strlen(str), false) {}
     fat_str(const fat_str& other) : fat_str(other.data(), other.size(), false) {}
     fat_str(const fat_str& other, size_t count) : fat_str(other.data(), std::min(other.size(), count), false) {}
 
@@ -46,7 +45,7 @@ public:
     }
 
     fat_str& assign(const char *str) {
-        return assign_impl(str, std::strlen(str), false, false);
+        return assign_impl(str, __builtin_strlen(str), false, false);
     }
 
     fat_str& assign(char ch) {
@@ -75,7 +74,7 @@ public:
     // ===== Assignment =====
 
     fat_str& operator=(const char *str) {
-        return assign(str, std::strlen(str));
+        return assign(str, __builtin_strlen(str));
     }
 
     fat_str& operator=(const fat_str& other) {
@@ -134,7 +133,7 @@ public:
     constexpr size_t size() const noexcept {
         size_t size = 0;
         if (m_ptr != nullptr)
-            std::memcpy(&size, m_ptr + sizeof(uint32_t), sizeof(uint32_t));
+            __builtin_memcpy(&size, m_ptr + sizeof(uint32_t), sizeof(uint32_t));
         return size;
     }
 
@@ -153,11 +152,11 @@ public:
             return;
         new_cap = new_cap < 32 ? 32 : new_cap;
         char *nptr = new char[m_data_offset + new_cap + 1]();
-        std::memcpy(nptr, &new_cap, sizeof(uint32_t)); // capacity
+        __builtin_memcpy(nptr, &new_cap, sizeof(uint32_t)); // capacity
         if (m_ptr != nullptr) { // length and data
             const size_t this_old_size = this->size();
-            std::memcpy(nptr + sizeof(uint32_t), &this_old_size, sizeof(uint32_t));
-            std::memcpy(nptr + m_data_offset, m_ptr + m_data_offset, this_old_size);
+            __builtin_memcpy(nptr + sizeof(uint32_t), &this_old_size, sizeof(uint32_t));
+            __builtin_memcpy(nptr + m_data_offset, m_ptr + m_data_offset, this_old_size);
             delete[] m_ptr;
         }
         m_ptr = nptr;
@@ -166,7 +165,7 @@ public:
     constexpr size_t capacity() const noexcept {
         size_t cap = 0;
         if (m_ptr != nullptr)
-            std::memcpy(&cap, m_ptr, sizeof(uint32_t));
+            __builtin_memcpy(&cap, m_ptr, sizeof(uint32_t));
         return cap;
     }
 
@@ -176,7 +175,7 @@ public:
         const size_t sz = size();
         if (sz > 0) { // don't clear capacity
             const size_t clr_size = sizeof(uint32_t) + sz;
-            std::memset(m_ptr + sizeof(uint32_t), 0, clr_size);
+            __builtin_memset(m_ptr + sizeof(uint32_t), 0, clr_size);
         }
     }
 
@@ -187,7 +186,7 @@ public:
         const size_t pos = m_data_offset + sz;
         m_ptr[pos] = ch;
         sz += 1;
-        std::memcpy(m_ptr + sizeof(uint32_t), &sz, sizeof(uint32_t));
+        __builtin_memcpy(m_ptr + sizeof(uint32_t), &sz, sizeof(uint32_t));
     }
 
     constexpr void pop_back() noexcept {
@@ -196,7 +195,7 @@ public:
             const size_t pos = m_data_offset + sz - 1;
             m_ptr[pos] = 0;
             sz -= 1;
-            std::memcpy(m_ptr + sizeof(uint32_t), &sz, sizeof(uint32_t));
+            __builtin_memcpy(m_ptr + sizeof(uint32_t), &sz, sizeof(uint32_t));
         }
     }
 
@@ -204,7 +203,7 @@ public:
         bool is_this = false;
         if (str == this->data())
             is_this = true;
-        return append_impl(str, std::strlen(str), false, false, is_this);
+        return append_impl(str, __builtin_strlen(str), false, false, is_this);
     }
 
     fat_str& append(const char *str, size_t count) {
@@ -244,7 +243,7 @@ public:
         bool is_this = false;
         if (str == this->data())
             is_this = true;
-        return append_impl(str, std::strlen(str), false, false, is_this);
+        return append_impl(str, __builtin_strlen(str), false, false, is_this);
     }
 
     fat_str& operator+=(char ch) {
@@ -274,7 +273,7 @@ public:
         } else if (m_ptr != nullptr && other.m_ptr != nullptr) {
             const char *this_str = m_ptr + m_data_offset;
             const char *other_str = other.m_ptr + m_data_offset;
-            result = strcmp(this_str, other_str) == 0;
+            result = __builtin_strcmp(this_str, other_str) == 0;
         }
         return result;
     }
@@ -283,7 +282,7 @@ public:
         bool result = false;
         if (m_ptr != nullptr && str != nullptr) {
             const char *this_str = m_ptr + m_data_offset;
-            result = strcmp(this_str, str) == 0;
+            result = __builtin_strcmp(this_str, str) == 0;
         }
         return result;
     }
@@ -305,19 +304,19 @@ private:
         if (cap > this->max_size())
             throw std::length_error("fat_str(): string size reached max size: 536870912 bytes");
         m_ptr = new char[m_data_offset + cap + 1]();
-        std::memcpy(m_ptr, &cap, sizeof(uint32_t)); // capacity
-        std::memcpy(m_ptr + sizeof(uint32_t), &n, sizeof(uint32_t)); // length
+        __builtin_memcpy(m_ptr, &cap, sizeof(uint32_t)); // capacity
+        __builtin_memcpy(m_ptr + sizeof(uint32_t), &n, sizeof(uint32_t)); // length
         if (n > 0) { // after moved 'str' is nullptr, so check it
             if (from_char)
-                std::memset(m_ptr + m_data_offset, str[0], n);
+                __builtin_memset(m_ptr + m_data_offset, str[0], n);
             else
-                std::memcpy(m_ptr + m_data_offset, str, n); // data
+                __builtin_memcpy(m_ptr + m_data_offset, str, n); // data
         }
     }
 
     fat_str& assign_impl(const char *str, size_t count, bool check_count, bool from_char) {
         if (check_count)
-            count = std::min(std::strlen(str), count);
+            count = std::min(__builtin_strlen(str), count);
         if (count > this->max_size())
             throw std::length_error("fat_str::assign(): string size reached max_size(): 536870912 bytes");
         const size_t this_cap = this->capacity();
@@ -329,16 +328,16 @@ private:
             delete[] m_ptr;
             m_ptr = nptr;
         } else if (this_size > count) { // zero out unused bytes
-            std::memset(m_ptr + m_data_offset + count, 0, this_size - count);
+            __builtin_memset(m_ptr + m_data_offset + count, 0, this_size - count);
         }
-        std::memcpy(m_ptr + sizeof(uint32_t), &count, sizeof(uint32_t)); // update length
+        __builtin_memcpy(m_ptr + sizeof(uint32_t), &count, sizeof(uint32_t)); // update length
         if (from_char) {
             if (count == 1)
                 m_ptr[m_data_offset] = str[0];
             else
-                std::memset(m_ptr + m_data_offset, str[0], count);
+                __builtin_memset(m_ptr + m_data_offset, str[0], count);
         } else {
-            std::memcpy(m_ptr + m_data_offset, str, count);
+            __builtin_memcpy(m_ptr + m_data_offset, str, count);
         }
         return *this;
     }
@@ -347,7 +346,7 @@ private:
     // new memory every append_impl() call...
     fat_str& append_impl(const char *str, size_t count, bool check_count, bool from_char, bool is_this) {
         if (check_count)
-            count = std::min(std::strlen(str), count);
+            count = std::min(__builtin_strlen(str), count);
         if (count > this->max_size())
             throw std::length_error("fat_str::append(): string size reached max_size(): 536870912 bytes");
         size_t this_size = this->size();
@@ -359,21 +358,21 @@ private:
                 if (count == 1) {
                     old_ch = str[0];
                 } else {
-                    old_str = strndup(str, count);
+                    old_str = __builtin_strndup(str, count);
                     if (old_str == nullptr)
                         throw std::runtime_error("fat_str::append(): unable to allocate more memory");
                 }
             }
             this->reserve(total_size + this_cap);
         }
-        std::memcpy(m_ptr + sizeof(uint32_t), &total_size, sizeof(uint32_t));
+        __builtin_memcpy(m_ptr + sizeof(uint32_t), &total_size, sizeof(uint32_t));
         if (from_char) {
             if (count == 1)
                 m_ptr[m_data_offset + this_size] = is_this ? old_ch : str[0];
             else
-                std::memset(m_ptr + m_data_offset + this_size, is_this ? old_ch : str[0], count);
+                __builtin_memset(m_ptr + m_data_offset + this_size, is_this ? old_ch : str[0], count);
         } else {
-            std::memcpy(m_ptr + m_data_offset + this_size, is_this ? old_str : str, count);
+            __builtin_memcpy(m_ptr + m_data_offset + this_size, is_this ? old_str : str, count);
         }
         if (is_this)
             std::free(old_str);
