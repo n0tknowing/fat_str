@@ -15,11 +15,21 @@ public:
     // ===== Constructors and Destructors =====
 
     fat_str() noexcept {}
-    fat_str(const char *str, size_t n) : fat_str(str, n, false) {}
-    fat_str(char ch, size_t count) : fat_str(&ch, count, true) {}
-    fat_str(const char *str) : fat_str(str, std::strlen(str), false) {}
-    fat_str(const fat_str& other) : fat_str(other.data(), other.size(), false) {}
-    fat_str(const fat_str& other, size_t count) : fat_str(other.data(), std::min(other.size(), count), false) {}
+
+    fat_str(const char *str, size_t n)
+    : fat_str(str, n, false) {}
+
+    fat_str(char ch, size_t count)
+    : fat_str(&ch, count, true) {}
+
+    fat_str(const char *str)
+    : fat_str(str, std::strlen(str), false) {}
+
+    fat_str(const fat_str& other)
+    : fat_str(other.data(), other.size(), false) {}
+
+    fat_str(const fat_str& other, size_t count)
+    : fat_str(other.data(), std::min(other.size(), count), false) {}
 
     fat_str(fat_str&& other) {
         if (this != &other) {
@@ -100,7 +110,7 @@ public:
 
     constexpr char& at(size_t pos) {
         if (pos >= this->size())
-            throw std::out_of_range("fat_str::at(size_t): index is out-of-range");
+            throw std::out_of_range("fat_str::at(): index is out-of-range");
         return m_ptr[m_data_offset + pos];
     }
 
@@ -148,7 +158,7 @@ public:
 
     void reserve(size_t new_cap) {
         if (new_cap > this->max_size())
-            throw std::length_error("fat_str::reserve(size_t): new capacity reached max_size(): 536870912 bytes");
+            throw std::length_error("fat_str::reserve(): new capacity reached max_size(): 536870912 bytes");
         if (new_cap <= this->capacity())
             return;
         new_cap = new_cap < 32 ? 32 : new_cap;
@@ -174,9 +184,9 @@ public:
 
     constexpr void clear() noexcept {
         const size_t sz = size();
-        if (sz > 0) { // don't clear capacity
-            const size_t clr_size = sizeof(uint32_t) + sz;
-            std::memset(m_ptr + sizeof(uint32_t), 0, clr_size);
+        if (sz > 0) {
+            const size_t clr_sz = sizeof(uint32_t) + sz; // don't clear capacity
+            std::memset(m_ptr + sizeof(uint32_t), 0, clr_sz);
         }
     }
 
@@ -311,7 +321,7 @@ private:
             if (from_char)
                 std::memset(m_ptr + m_data_offset, str[0], n);
             else
-                std::memcpy(m_ptr + m_data_offset, str, n); // data
+                std::memcpy(m_ptr + m_data_offset, str, n);
         }
     }
 
