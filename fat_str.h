@@ -190,7 +190,7 @@ public:
         }
     }
 
-    constexpr void push_back(char ch) noexcept {
+    constexpr void push_back(char ch) {
         size_t sz = this->size();
         if (sz == 0 || sz == capacity())
             this->reserve(sz + 32);

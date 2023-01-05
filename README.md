@@ -63,7 +63,7 @@ public:
     void reserve(size_t new_cap);
 
     constexpr void clear() noexcept;
-    constexpr void push_back(char ch) noexcept;
+    constexpr void push_back(char ch);
     constexpr void pop_back() noexcept;
     constexpr void swap(fat_str& other) noexcept;
 
