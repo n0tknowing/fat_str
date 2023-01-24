@@ -5,6 +5,7 @@
 #include "fat_str.h"
 
 int main() {
+    // preamble
     printf("sizeof(fat_str::fat_str) = %zu\n\n", sizeof(fat_str::fat_str));
 
     fat_str::fat_str str{"Hello fat_str"}, str2{"Hello world"};
@@ -206,4 +207,16 @@ int main() {
     i += 'o';
     i += n;
     printf("i = %s, %zu, %zu\n", i.data(), i.size(), i.capacity());
+
+    fat_str::fat_str k = "hello from _fs \0literal!"_fs;
+    if (k.size() == sizeof("hello from _fs \0literal!") - 1) {
+        printf("[OK] %zu %zu\n", k.size(), k.capacity());
+        for (size_t _i = 0; _i < k.size(); _i++) {
+            if (k[_i] != '\0')
+                putchar(k[_i]);
+            else
+                putchar('?');
+        }
+        putchar('\n');
+    }
 }

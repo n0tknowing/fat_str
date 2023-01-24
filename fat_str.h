@@ -299,11 +299,11 @@ public:
     }
 
     constexpr bool operator!=(const fat_str& other) const noexcept {
-        return !(*this == other);
+        return !(operator==(other));
     }
 
     constexpr bool operator!=(const char *str) const noexcept {
-        return !(*this == str);
+        return !(operator==(str));
     }
 
 private:
@@ -317,7 +317,7 @@ private:
         m_ptr = new char[m_data_offset + cap + 1]();
         std::memcpy(m_ptr, &cap, sizeof(uint32_t)); // capacity
         std::memcpy(m_ptr + sizeof(uint32_t), &n, sizeof(uint32_t)); // length
-        if (n > 0) { // after moved 'str' is nullptr, so check it
+        if (str != nullptr) { // after moved 'str' is nullptr, so check it
             if (from_char)
                 std::memset(m_ptr + m_data_offset, str[0], n);
             else
@@ -391,5 +391,9 @@ private:
     }
 };
 };
+
+fat_str::fat_str operator""_fs(const char *str, size_t count) {
+    return fat_str::fat_str(str, count);
+}
 
 #endif // FAT_STR_H

@@ -23,6 +23,7 @@ some pointer magic.
 ## (Current) Public API
 
 ```cpp
+namespace fat_str {
 class fat_str {
 public:
     fat_str() noexcept;
@@ -86,6 +87,9 @@ public:
     constexpr bool operator!=(const char* c_str) const noexcept;
     constexpr bool operator!=(const fat_str& other) const noexcept;
 };
+};
+
+fat_str::fat_str operator""_fs(const char* c_str, size_t count);
 ```
 
 
